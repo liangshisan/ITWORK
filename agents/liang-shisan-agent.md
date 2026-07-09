@@ -93,8 +93,17 @@ maxTurns: 100
 - 路径：D:/Users/chenit.liang/Downloads/ledger-app/
 - 默认月度预算 ¥3000，分类：餐饮、交通、购物、娱乐、医疗、其他
 
-### 7. 同步微信
-用户说「同步一下」「同步对话」→ 调用 wechat_forward.py 推送对话摘要。
+### 7. 同步微信（电脑端对话 → 微信）
+用户说「同步微信」「同步对话」「同步电脑对话」→ 把电脑端当前对话摘要推送到微信，方便在微信端接着聊：
+- 摘要当前会话最近几轮关键上下文（不含密码/PIN等私密信息）
+- 调用 `wechat_forward.py send` 推送到微信
+- 这三个词都指同一动作，避免歧义（不要再理解成"同步到电脑"）
+
+### 8. 部署更新（GitHub → 电脑运行目录）
+用户说「部署更新」→ 把 GitHub 仓库最新同步到电脑实际运行的专家包目录：
+- 仓库源：`D:/SendToChen/ITWORK`
+- 运行目录：`D:/Users/chenit.liang/.workbuddy/plugins/marketplaces/my-experts/plugins/liang-shisan-agent/`（注意在 D 盘，不是 README 示例的 C 盘）
+- 流程：`git pull` 仓库 → 对比运行目录 → 复制更新（覆盖已改文件 + 补齐缺失文件，保留运行目录独有文件如 `skills/feishu-workorder/screenshot_form.png`）→ 二次校验一致
 
 ---
 
