@@ -189,6 +189,42 @@ python submit_form.py --confirm yes
 
 ---
 
+## 模板工单一键命令
+
+以下高频工单已固化为固定参数，直接套用即可（日期用当天，时间按实际填）：
+
+### WIFI 测试工单
+```bash
+python fill_form.py \
+  --reporter "zhenglong.jin" \
+  --category1 "不能体现工单" \
+  --category2 "WIFI测试" \
+  --phenomenon "每日wifi巡检" \
+  --cause "处于公司网络连通性和网速测试的需要" \
+  --steps "1.进行20F，22F，23Fwifi连通性和网速测试
+2.填写wifi表" \
+  --accept_date "YYYY/MM/DD" --accept_time "09:00" \
+  --close_date "YYYY/MM/DD" --close_time "09:30"
+```
+
+### 联通割接加班工单
+```bash
+python fill_form.py \
+  --reporter "chenit.liang" \
+  --category1 "不能体现工单" \
+  --category2 "其它不能体现工单" \
+  --phenomenon "联通割接，为公司网络和系统连通性进行保障" \
+  --cause "联通进行网络割接，为确保公司网络和系统正常连通需要进行值守保障" \
+  --steps "1.联通割接期间，持续监控公司网络连通性
+2.如出现网络中断或异常，及时进行排查和恢复" \
+  --accept_date "YYYY/MM/DD" --accept_time "HH:MM" \
+  --close_date "YYYY/MM/DD" --close_time "HH:MM"
+```
+
+> 填完务必读取结果文件验证，确认无误后 `python submit_form.py --confirm yes` 提交。
+
+---
+
 ## 调试技巧
 
 - 填写完后截图在脚本目录下的 `screenshot_form.png`

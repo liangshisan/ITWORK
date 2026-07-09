@@ -4,6 +4,16 @@
 
 仓库地址：https://github.com/liangshisan/ITWORK
 
+## 快速上手（三步）
+
+1. **下载**：点页面右上角绿色 `Code` → `Download ZIP` → 解压到任意位置
+2. **启动 Edge（必须）**：把 `Edge-Debug-9222.lnk` 复制到桌面双击，它会打开一个带 `--remote-debugging-port=9222` 的 Edge 窗口（工单填写、金山文档出入库都依赖这个端口）
+3. **装专家包**：把解压后的全部文件复制到
+   `C:\Users\你的用户名\.workbuddy\plugins\marketplaces\my-experts\plugins\liang-shisan-agent\`
+   重启 / 重载 WorkBuddy，即可在专家列表看到「梁十三智能体」
+
+> 图文版见 `上手说明.md`
+
 ## 包含内容
 
 | 模块 | 说明 |
@@ -15,6 +25,7 @@
 | skills/sunflower-remote/ | 向日葵远程码推送 |
 | .codebuddy-plugin/plugin.json | 专家包注册信息 |
 | Edge-Debug-9222.lnk | 带 9222 调试端口的 Edge 快捷方式（自动化填表必备，双击即用） |
+| wechat_forward.py | 微信消息推送工具（仓库根目录，需改 `BOT_TOKEN`/`TO_USER` 为你的微信配置） |
 
 ## 快速使用
 
