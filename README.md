@@ -16,33 +16,28 @@
 
 ## 微信配置（使用推送功能前必看）
 
-智能体的微信推送依赖仓库根目录的 `wechat_forward.py`。脚本顶部有**两个写死的专属值**，别人直接运行会把消息推到原作者（辰哥）的微信上。**你自己用必须改成自己的配置。**
+智能体的微信推送通过 **守护进程 + 队列** 架构实现：
+
+1. **`wechat_sync.py daemon`** —— 后台常驻进程，监听微信消息自动刷新 `context_token`，并消费 `.wechat_outbox.jsonl` 队列推送到微信
+2. **`wechat_sync.py push "消息"`** —— 桌面端要推消息时，写入队列，daemon 自动发送
+3. **开机自启**（可选，推荐）—— 设 Windows 计划任务 `WechatSyncDaemon`，登录时自动启动 daemon
+
+脚本里有两个写死的专属值，必须改成你自己的：
 
 ```python
 BOT_TOKEN = '42c0727e3308@im.bot:xxxx'   # 你的 ClawBot 机器人令牌
 TO_USER   = 'o9cq8008xxxx@im.wechat'      # 推送目标（你自己的微信用户 ID）
 ```
 
-### 改这两行
+### 部署步骤
 
-把上面两行改成你自己的微信配置即可（辰哥的是写死的，必须换成你自己的，否则消息会推到辰哥微信）：
+1. **改配置**：把 `wechat_sync.py` 顶部的 `BOT_TOKEN` / `TO_USER` 换成你自己的
+2. **启动 daemon**：`python wechat_sync.py daemon`
+3. **发一条微信给 ClawBot**：daemon 会自动捕获并缓存 `context_token`
+4. **验证**：`python wechat_sync.py push "测试"` → 微信应收到消息
+5. **（可选）设开机自启**：创建计划任务，登录时自动跑 `python wechat_sync.py daemon`
 
-- `BOT_TOKEN` → 填你自己的 ClawBot 令牌
-- `TO_USER` → 填你自己的微信用户 ID（接收推送的账号）
-
-改完保存。
-
-### 首次获取会话 token（一次性）
-
-`context_token` 需要先从微信侧激活，缓存到同目录 `.wechat_token.json`：
-
-```bash
-python wechat_forward.py listen      # 开始长轮询监听
-```
-
-运行后，用你的微信给这个 ClawBot 发**任意一条消息**，脚本会自动捕获并缓存 `context_token`。之后智能体的所有 `send` 推送都能正常工作。
-
-> ⏰ token 约 30 分钟有效。过期后重新发一条消息 + 再跑一次 `listen` 即可刷新，无需改配置。
+> ⚠️ 仓库里另有 `wechat_forward.py` 是一个简化版脚本，**不要用它**（它跟常驻 daemon 抢 getupdates 端点，会导致推送链路断掉）。正确工具是 `wechat_sync.py`。
 
 ## 包含内容
 
@@ -55,7 +50,8 @@ python wechat_forward.py listen      # 开始长轮询监听
 | skills/sunflower-remote/ | 向日葵远程码推送 |
 | .codebuddy-plugin/plugin.json | 专家包注册信息 |
 | Edge-Debug-9222.lnk | 带 9222 调试端口的 Edge 快捷方式（自动化填表必备，双击即用） |
-| wechat_forward.py | 微信消息推送工具（仓库根目录，需改 `BOT_TOKEN`/`TO_USER` 为你的微信配置） |
+| wechat_sync.py | 微信推送守护进程（正确工具：daemon 长轮询 + push 队列，开机自启推荐） |
+| wechat_forward.py | 旧版推送脚本（⚠️ 废弃，勿用——会抢 daemon 的 getupdates 端点） |
 
 ## 快速使用
 

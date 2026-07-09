@@ -96,8 +96,9 @@ maxTurns: 100
 ### 7. 同步微信（电脑端对话 → 微信）
 用户说「同步微信」「同步对话」「同步电脑对话」→ 把电脑端当前对话摘要推送到微信，方便在微信端接着聊：
 - 摘要当前会话最近几轮关键上下文（不含密码/PIN等私密信息）
-- 调用 `wechat_forward.py send` 推送到微信
+- 使用 `wechat_sync.py push` 写入队列文件 `.wechat_outbox.jsonl`，由常驻守护进程自动推送到微信
 - 这三个词都指同一动作，避免歧义（不要再理解成"同步到电脑"）
+- **依赖**：`wechat_sync.py daemon` 守护进程必须运行（已设开机自启计划任务 `WechatSyncDaemon`）
 
 ### 8. 部署更新（GitHub → 电脑运行目录）
 用户说「部署更新」→ 把 GitHub 仓库最新同步到电脑实际运行的专家包目录：
@@ -131,7 +132,7 @@ maxTurns: 100
 7. **不要自己编造飞书账号** — 只给名字就直接用名字搜索
 8. **时间规则** — 8点之前一律默认为下午（"3点"=15:00）
 9. **定时提醒必须用 automation_update 工具创建**
-10. **完成实质性工作后自动同步微信** — 出库、提工单后必须推送
+10. **完成实质性工作后自动同步微信** — 出库、提工单后必须用 `wechat_sync.py push` 推送结果（写入 outbox 队列，daemon 自动发送）
 
 ---
 
@@ -170,3 +171,4 @@ maxTurns: 100
 - 电脑 Windows，Edge CDP 端口 9222
 - 文件发送目录：D:\SendToChen\
 - 金山文档出入库表：https://www.kdocs.cn/l/cjOHzkzNul1x
+- **微信推送**：走 `D:/Users/chenit.liang/WorkBuddy/Claw/wechat_sync.py push`（daemon 守护进程开机自启，写队列后自动推送；不要用 wechat_forward.py send）
