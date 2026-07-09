@@ -1,8 +1,15 @@
 """
 微信消息转发工具 — 桌面端 → 微信
+
+【配置（使用前必改）】
+  本脚本顶部两行是写死的专属值，别人直接用会推到原作者微信：
+    BOT_TOKEN = '你的ClawBot令牌'   # 格式: 应用ID@im.bot:密钥
+    TO_USER   = '推送目标用户ID'     # 格式: xxxx@im.wechat（你自己的微信用户ID）
+  改成你自己的 ClawBot 配置后再运行。
+
 用法:
   python wechat_forward.py send "消息内容"        # 发消息到微信
-  python wechat_forward.py listen                 # 长轮询监听新消息，刷新token
+  python wechat_forward.py listen                 # 长轮询监听：用微信给 ClawBot 发一条消息，捕获并缓存 context_token
   python wechat_forward.py status                  # 查看 token 状态
 """
 import requests
