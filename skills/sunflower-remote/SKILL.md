@@ -37,6 +37,9 @@ sleep 5 && tasklist | grep -i sunlogin
 确认至少有 `SunloginClient.exe` (Services) 和 `sunlogin_guard.exe` 进程
 
 ### Step 4: 推送到微信
+
+> 脚本在仓库根目录 `wechat_forward.py`，首次使用需把脚本里的 `BOT_TOKEN` 和 `TO_USER` 改成你自己的微信转发配置。
+
 ```bash
 python wechat_forward.py send "向日葵已启动 ✅
 

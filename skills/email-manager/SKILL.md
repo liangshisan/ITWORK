@@ -106,4 +106,4 @@ mode: craft
 | playwright | CDP 浏览器控制 | `pip install playwright` |
 | PowerShell | 剪贴板操作 | 系统自带 |
 | 查询AD用户及组-2022-8-22.exe | AD 查询 | `D:\Users\chenit.liang\Desktop\` |
-| 微信消息转发 | 推送结果 | `wechat_forward.py` |
+| 微信消息转发 | 推送结果 | `wechat_forward.py`（仓库根目录，需改 `BOT_TOKEN`/`TO_USER` 为你的微信配置） |
