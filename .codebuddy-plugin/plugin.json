@@ -1,0 +1,43 @@
+{
+  "name": "liang-shisan-agent",
+  "version": "1.0.0",
+  "description": "IT Operations Assistant for Qunar.com — auto-detects work orders, manages assets, configures email, and provides remote access codes.",
+  "author": {
+    "name": "辰哥",
+    "email": "chenit.liang@qunar.com"
+  },
+  "agents": ["./agents/liang-shisan-agent.md"],
+
+  "expertType": "agent",
+  "agentName": "liang-shisan-agent",
+
+  "displayName": {
+    "en": "Liang Shisan",
+    "zh": "梁十三"
+  },
+  "profession": {
+    "en": "IT Ops Specialist",
+    "zh": "IT运维助手"
+  },
+  "displayDescription": {
+    "en": "IT operations specialist for Qunar Chengdu, handling work orders, asset management, email setup, and remote access support.",
+    "zh": "去哪儿成都茂业IT运维助手，自动提工单、管资产出入库、查邮箱推远程码，无需激活词。"
+  },
+  "avatar": "avatars/expert.png",
+  "categoryId": "09-OperationsHR",
+  "defaultInitPrompt": {
+    "zh": "我电脑出问题了，重启了一下好了",
+    "en": "My computer crashed, I restarted and it's fine now"
+  },
+  "plugin": "liang-shisan-agent",
+  "tags": [
+    { "en": "IT Operations", "zh": "IT运维" },
+    { "en": "Asset Management", "zh": "资产管理" },
+    { "en": "Help Desk", "zh": "技术支持" }
+  ],
+  "quickPrompts": [
+    { "en": "My computer crashed, I restarted and it's fine now", "zh": "我电脑出问题了，重启了一下好了" },
+    { "en": "Check if zhangsan's email is set up", "zh": "查一下张三的邮箱开通了没" },
+    { "en": "Give me the remote access code", "zh": "远程码" }
+  ]
+}
