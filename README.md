@@ -14,6 +14,7 @@
 | skills/email-manager/ | 邮箱查询 + 自动开通 |
 | skills/sunflower-remote/ | 向日葵远程码推送 |
 | .codebuddy-plugin/plugin.json | 专家包注册信息 |
+| Edge-Debug-9222.lnk | 带 9222 调试端口的 Edge 快捷方式（自动化填表必备，双击即用） |
 
 ## 快速使用
 
@@ -21,9 +22,9 @@
 
 ```bash
 git clone https://github.com/liangshisan/ITWORK.git
-cp -r ITWORK ~/.workbuddy/plugins/marketplaces/my-experts/plugins/liang-shisan-agent/
-python3 scripts/register_expert.py ~/.workbuddy/plugins/marketplaces/my-experts/plugins/liang-shisan-agent/
+cp -r ITWORK/. ~/.workbuddy/plugins/marketplaces/my-experts/plugins/liang-shisan-agent/
 ```
+> 复制完成后重启 / 重载 WorkBuddy，即可在专家列表看到「梁十三智能体」。
 
 ### 方式二：单独运行技能脚本
 
@@ -38,7 +39,7 @@ python skills/feishu-workorder/submit_form.py --confirm yes
 
 ## 运行环境
 
-- Windows 10/11 + Edge（--remote-debugging-port=9222）
+- Windows 10/11 + Edge（必须带 `--remote-debugging-port=9222` 调试端口；仓库已附 `Edge-Debug-9222.lnk`，复制到桌面双击即可启动带端口的 Edge）
 - Python 3.10+
 - Playwright / pyautogui / Pillow
 - 内网：飞书表单、金山文档、AD工具、ITDB、QSSO
