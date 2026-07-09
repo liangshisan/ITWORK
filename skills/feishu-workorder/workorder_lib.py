@@ -37,8 +37,8 @@ async def fill_work_order(
         if not target_page:
             target_page = await context.new_page()
 
-        await target_page.goto(FORM_URL, wait_until="networkidle", timeout=30000)
-        await target_page.wait_for_timeout(1000)
+        await target_page.goto(FORM_URL, wait_until="domcontentloaded", timeout=30000)
+        await target_page.wait_for_timeout(3000)  # 等 React 渲染完（原 networkidle 太慢）
         items = await target_page.query_selector_all(".ud__form__item")
         log = [f"items: {len(items)}"]
 
@@ -173,7 +173,7 @@ async def fill_work_order(
                 if accept_date:
                     await inp.click()
                     await inp.fill(accept_date)
-                    await inp.press("Escape")  # Escape 关闭日历弹窗，Enter 只确认不关闭
+                    await inp.press("Enter")
                     await target_page.wait_for_timeout(300)
             for inp in await items[8].query_selector_all('input[placeholder="时:分"]'):
                 if accept_time:
