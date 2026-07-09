@@ -173,13 +173,13 @@ async def fill_work_order(
                 if accept_date:
                     await inp.click()
                     await inp.fill(accept_date)
-                    await inp.press("Enter")
+                    await inp.press("Escape")  # Escape 关闭日历弹窗，Enter 只确认不关闭
                     await target_page.wait_for_timeout(300)
             for inp in await items[8].query_selector_all('input[placeholder="时:分"]'):
                 if accept_time:
                     await inp.click()
                     await inp.fill(accept_time)
-                    await inp.press("Enter")
+                    await inp.press("Escape")
                     await target_page.wait_for_timeout(300)
             log.append(f"接单时间: {accept_date} {accept_time}")
 
@@ -191,13 +191,13 @@ async def fill_work_order(
                 if close_date:
                     await inp.click()
                     await inp.fill(close_date)
-                    await inp.press("Enter")
+                    await inp.press("Escape")
                     await target_page.wait_for_timeout(300)
             for inp in await items[9].query_selector_all('input[placeholder="时:分"]'):
                 if close_time:
                     await inp.click()
                     await inp.fill(close_time)
-                    await inp.press("Enter")
+                    await inp.press("Escape")
                     await target_page.wait_for_timeout(300)
             log.append(f"关单时间: {close_date} {close_time}")
 
