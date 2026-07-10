@@ -14,7 +14,7 @@ CDP_URL = "http://127.0.0.1:9222"
 KDOCS_URL = "https://www.kdocs.cn/l/cjOHzkzNul1x"
 
 SHEET_TABS = {"入库": "入库记录", "出库": "出库记录"}
-SLEEP = {"reload": 0.5, "tab": 1.0, "copy": 0.3, "f2": 0.08, "sel": 0.04, "type": 0.04, "enter": 0.12, "key": 0.03}
+SLEEP = {"reload": 3.0, "tab": 1.0, "copy": 0.3, "f2": 0.08, "sel": 0.04, "type": 0.04, "enter": 0.12, "key": 0.03}
 
 
 def parse_args():
