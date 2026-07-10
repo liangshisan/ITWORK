@@ -91,9 +91,8 @@ class TokenStore:
         with self.lock:
             if self.token is None:
                 return None, None
-            age = time.time() - self.updated_at
-            if age > 1800:
-                return None, None  # 过期
+            # 不靠时间判过期，靠服务端返回 -14 来判断
+            # context_token 实际有效期远大于 30 分钟，硬过期导致消息卡队列
             return self.token, self.from_id
 
 
@@ -115,7 +114,7 @@ def poll_messages(timeout=35):
 
 
 def send_to_wechat(text, context_token):
-    """发送消息到微信"""
+    """发送消息到微信，返回 (http_ok, session_expired)"""
     try:
         r = requests.post(
             f'{BASE_URL}/ilink/bot/sendmessage',
@@ -134,10 +133,15 @@ def send_to_wechat(text, context_token):
             },
             timeout=15
         )
-        return r.status_code == 200
+        if r.status_code == 200:
+            body = r.json()
+            if body.get('ret') == -14:
+                return False, True  # session 过期
+            return True, False
+        return False, False
     except Exception as e:
         print(f'[Send] 异常: {e}')
-        return False
+        return False, False
 
 
 # ── 守护进程 ──────────────────────────────────
@@ -197,9 +201,13 @@ def daemon_run():
                             print(f'[Outbox] 无 token，消息排队等待: {text[:30]}...')
                             unsent.append(line)
                             continue
-                        ok = send_to_wechat(text, token)
+                        ok, expired = send_to_wechat(text, token)
                         if ok:
                             print(f'[桌面→微信] 已发送: {text[:40]}...')
+                        elif expired:
+                            print(f'[桌面→微信] Token过期，等待刷新后重试')
+                            store.token = None  # 标记失效，等 poll 刷新
+                            unsent.append(line)
                         else:
                             print(f'[桌面→微信] 发送失败，保留重试')
                             unsent.append(line)
@@ -232,8 +240,73 @@ def daemon_run():
     print('[Daemon] 已停止')
 
 
+# ── 消息排版模板 ─────────────────────────────
+from datetime import datetime
+
+SCENE_FORMATS = {
+    'workorder': {
+        'icon': '📋',
+        'title': '工单已提交',
+        'footer': True,
+    },
+    'asset_out': {
+        'icon': '📦',
+        'title': '资产出库',
+        'footer': True,
+    },
+    'asset_in': {
+        'icon': '📥',
+        'title': '资产入库',
+        'footer': True,
+    },
+    'remote': {
+        'icon': '🖥️',
+        'title': '远程连接',
+        'footer': False,
+    },
+    'summary': {
+        'icon': '📝',
+        'title': '对话同步',
+        'footer': True,
+    },
+    'daily': {
+        'icon': '🟢',
+        'title': 'IT 日报',
+        'footer': True,
+    },
+    'plain': {
+        'icon': '',
+        'title': '',
+        'footer': False,
+    },
+}
+
+
+def format_push(scene, text, extra=None):
+    """将原始文本按场景排版成 T5 日报风格
+    scene: workorder|asset_out|asset_in|remote|summary|daily|plain
+    """
+    cfg = SCENE_FORMATS.get(scene, SCENE_FORMATS['plain'])
+    icon = cfg['icon']
+    title = cfg['title']
+    now = datetime.now().strftime('%H:%M')
+
+    lines = [f'{icon} {title}' if icon else '']
+    lines.append('━━━━━━━━━━━━━━━━━')
+    lines.append(text.strip())
+    lines.append('━━━━━━━━━━━━━━━━━')
+    if cfg['footer']:
+        lines.append(f'⏰ {now}  📍 成都茂业 IT运维')
+
+    return '\n'.join(lines)
+
+
 def cmd_push(text):
-    """推送消息到微信（写入队列文件）"""
+    """推送消息到微信（写入队列文件）
+    支持两种调用方式:
+      wechat_sync.py push "消息"
+      wechat_sync.py push --type workorder "消息"
+    """
     entry = json.dumps({'text': text, 'ts': time.time()}, ensure_ascii=False)
     with open(OUTBOX_FILE, 'a', encoding='utf-8') as f:
         f.write(entry + '\n')
@@ -283,10 +356,19 @@ def main():
     if cmd == 'daemon':
         daemon_run()
     elif cmd == 'push':
-        if len(sys.argv) < 3:
-            print('用法: python wechat_sync.py push "消息"')
+        # 解析参数: push [--type scene] "消息"
+        scene = 'plain'
+        text_idx = 2
+        if len(sys.argv) >= 4 and sys.argv[2] == '--type':
+            scene = sys.argv[3]
+            text_idx = 4
+        if text_idx >= len(sys.argv):
+            print('用法: python wechat_sync.py push [--type scene] "消息"')
+            print('场景: workorder|asset_out|asset_in|remote|summary|daily|plain')
             return
-        cmd_push(sys.argv[2])
+        raw_text = sys.argv[text_idx]
+        formatted = format_push(scene, raw_text)
+        cmd_push(formatted)
     elif cmd == 'status':
         cmd_status()
     elif cmd == 'stop':
